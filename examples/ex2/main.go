@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"link"
+	link "github.com/avawing/link/m"
 	"strings"
 )
 
