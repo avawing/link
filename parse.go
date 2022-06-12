@@ -28,6 +28,21 @@ func Parse(r io.Reader) ([]Link, error) {
 	return links, nil
 }
 
+func parseText(node *html.Node) string {
+	if node.Type == html.TextNode {
+		return node.Data
+	}
+	if node.Type != html.ElementNode {
+		return ""
+	}
+	var ret string
+	for child := node.FirstChild; child != nil; child = child.NextSibling {
+		ret += parseText(child) + " "
+	}
+
+	return ret
+}
+
 func buildLink(node *html.Node) Link {
 	var ret Link
 
@@ -37,7 +52,7 @@ func buildLink(node *html.Node) Link {
 			break
 		}
 	}
-	ret.Text = "TODO: PARSE TEXT"
+	ret.Text = parseText(node)
 	return ret
 }
 
@@ -49,8 +64,6 @@ func linkNodes(node *html.Node) []*html.Node {
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
 		ret = append(ret, linkNodes(child)...)
 	}
-
-	// what is basecase?
 	return ret
 }
 
