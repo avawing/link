@@ -19,12 +19,15 @@ func Parse(r io.Reader) ([]Link, error) {
 		return nil, err
 	}
 	dfs(doc, "")
-	_ = doc
 	return nil, nil
 }
 
 func dfs(node *html.Node, padding string) {
-	fmt.Println(padding, node.Data)
+	msg := node.Data
+	if node.Type == html.ElementNode {
+		msg = "<" + msg + ">"
+	}
+	fmt.Println(padding, msg)
 	// tree traversal -> for every first child where c is not nil, we go to the next sibling
 	// cool way to traverse the dom -> not as verbose as other things
 	for c := node.FirstChild; c != nil; c = c.NextSibling {
