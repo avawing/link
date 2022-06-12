@@ -1,7 +1,6 @@
 package link
 
 import (
-	"fmt"
 	"golang.org/x/net/html"
 	"io"
 )
@@ -19,14 +18,27 @@ func Parse(r io.Reader) ([]Link, error) {
 		return nil, err
 	}
 
-	dfs(doc, " ")
 	nodes := linkNodes(doc)
+	var links []Link
 	for _, node := range nodes {
-		fmt.Println(node)
+		links = append(links, buildLink(node))
 	}
 	//dfs(doc, "")
 	// unneeded dfs now
-	return nil, nil
+	return links, nil
+}
+
+func buildLink(node *html.Node) Link {
+	var ret Link
+
+	for _, attr := range node.Attr {
+		if attr.Key == "href" {
+			ret.Href = attr.Val
+			break
+		}
+	}
+	ret.Text = "TODO: PARSE TEXT"
+	return ret
 }
 
 func linkNodes(node *html.Node) []*html.Node {
@@ -42,15 +54,15 @@ func linkNodes(node *html.Node) []*html.Node {
 	return ret
 }
 
-func dfs(node *html.Node, padding string) {
-	msg := node.Data
-	if node.Type == html.ElementNode {
-		msg = "<" + msg + ">"
-	}
-	fmt.Println(padding, msg)
-	// tree traversal -> for every first child where c is not nil, we go to the next sibling
-	// cool way to traverse the dom -> not as verbose as other things
-	for child := node.FirstChild; child != nil; child = child.NextSibling {
-		dfs(child, padding+"  ")
-	}
-}
+//func dfs(node *html.Node, padding string) {
+//	msg := node.Data
+//	if node.Type == html.ElementNode {
+//		msg = "<" + msg + ">"
+//	}
+//	fmt.Println(padding, msg)
+//	// tree traversal -> for every first child where c is not nil, we go to the next sibling
+//	// cool way to traverse the dom -> not as verbose as other things
+//	for child := node.FirstChild; child != nil; child = child.NextSibling {
+//		dfs(child, padding+"  ")
+//	}
+//}
