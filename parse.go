@@ -3,6 +3,7 @@ package link
 import (
 	"golang.org/x/net/html"
 	"io"
+	"strings"
 )
 
 // Link represents a link in an html document
@@ -40,7 +41,7 @@ func parseText(node *html.Node) string {
 		ret += parseText(child) + " "
 	}
 
-	return ret
+	return strings.Join(strings.Fields(ret), " ")
 }
 
 func buildLink(node *html.Node) Link {
@@ -64,6 +65,7 @@ func linkNodes(node *html.Node) []*html.Node {
 	for child := node.FirstChild; child != nil; child = child.NextSibling {
 		ret = append(ret, linkNodes(child)...)
 	}
+
 	return ret
 }
 
